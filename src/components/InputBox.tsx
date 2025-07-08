@@ -1,8 +1,19 @@
 import { useState } from 'react';
-import { Paperclip, Mic, Send, FileText, ImageIcon, Camera, Brain, Search, Sparkles } from 'lucide-react';
+import {
+  Paperclip,
+  Mic,
+  FileText,
+  ImageIcon,
+  Camera,
+  Brain,
+  Search,
+  Sparkles,
+  ArrowUpRight,
+  Loader2,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const dynamicSuggestions: Record<string, string[]> = {
+const dynamicSuggestions: Record<'code' | 'image' | 'concept', string[]> = {
   code: ['a login page', 'a sorting algorithm', 'a weather API script'],
   image: ['a cyberpunk city', 'a flying car concept', 'a retro-futuristic sunset'],
   concept: ['quantum computing', 'AI alignment', 'web3 and decentralization'],
@@ -10,24 +21,23 @@ const dynamicSuggestions: Record<string, string[]> = {
 
 export default function InputBox() {
   const [input, setInput] = useState('');
-  const [contextTag, setContextTag] = useState<string | null>(null);
+  const [contextTag, setContextTag] = useState<'code' | 'image' | 'concept' | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const handleSuggestionClick = (type: string) => {
-    const promptMap = {
+  const handleSuggestionClick = (type: 'code' | 'image' | 'concept') => {
+    const promptMap: Record<'code' | 'image' | 'concept', string> = {
       code: 'Help me generate a code of ',
       image: 'Create an image of ',
       concept: 'Explain ',
     };
-    setInput(promptMap[type] || '');
+    setInput(promptMap[type]);
     setContextTag(type);
   };
 
   const handleSend = () => {
     if (!input.trim()) return;
     setIsSending(true);
-    // Simulate API
     setTimeout(() => {
       setIsSending(false);
       console.log('Sent:', input);
@@ -38,19 +48,34 @@ export default function InputBox() {
 
   return (
     <div className="w-full mt-8">
-      {/* Suggestion trigger (simulate suggestion click) */}
       <div className="flex justify-center gap-2 mb-3 text-sm">
-        <button onClick={() => handleSuggestionClick('code')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Code</button>
-        <button onClick={() => handleSuggestionClick('image')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Image</button>
-        <button onClick={() => handleSuggestionClick('concept')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Concept</button>
+        <button
+          onClick={() => handleSuggestionClick('code')}
+          className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
+        >
+          Code
+        </button>
+        <button
+          onClick={() => handleSuggestionClick('image')}
+          className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
+        >
+          Image
+        </button>
+        <button
+          onClick={() => handleSuggestionClick('concept')}
+          className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
+        >
+          Concept
+        </button>
       </div>
 
       <div className="relative w-full">
-        {/* Input Row */}
         <div className="flex items-center gap-2 p-3 bg-white/10 dark:bg-white/5 border border-primary rounded-xl backdrop-blur-md">
-          {/* File Upload Menu */}
           <div className="relative">
-            <button onClick={() => setShowUpload(prev => !prev)} className="p-2 rounded hover:bg-white/10 transition">
+            <button
+              onClick={() => setShowUpload((prev) => !prev)}
+              className="p-2 rounded hover:bg-white/10 transition"
+            >
               <Paperclip size={18} />
             </button>
             <AnimatePresence>
@@ -75,12 +100,10 @@ export default function InputBox() {
             </AnimatePresence>
           </div>
 
-          {/* Mic */}
           <button className="p-2 rounded hover:bg-white/10 transition">
             <Mic size={18} />
           </button>
 
-          {/* Input */}
           <input
             type="text"
             value={input}
@@ -89,7 +112,6 @@ export default function InputBox() {
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-white/40"
           />
 
-          {/* Utilities */}
           <div className="hidden md:flex gap-2">
             <button title="Search" className="p-2 rounded hover:bg-white/10 transition">
               <Search size={16} />
@@ -102,23 +124,31 @@ export default function InputBox() {
             </button>
           </div>
 
-          {/* Send Button */}
           <button
             onClick={handleSend}
             disabled={!input.trim() || isSending}
-            className="bg-primary text-black px-4 py-2 rounded-lg font-medium hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 bg-primary text-black px-4 py-2 rounded-lg font-semibold hover:brightness-105 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {isSending ? 'Thinking...' : 'Send'}
+            {isSending ? (
+              <>
+                <Loader2 className="animate-spin h-4 w-4" />
+                Thinking...
+              </>
+            ) : (
+              <>
+                Send
+                <ArrowUpRight size={16} />
+              </>
+            )}
           </button>
         </div>
 
-        {/* Contextual Sub-Suggestions */}
         {contextTag && dynamicSuggestions[contextTag] && (
           <div className="flex flex-wrap gap-2 mt-3 text-sm">
             {dynamicSuggestions[contextTag].map((sug, i) => (
               <button
                 key={i}
-                onClick={() => setInput(prev => prev + sug)}
+                onClick={() => setInput((prev) => prev + sug)}
                 className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
               >
                 {sug}
@@ -129,4 +159,4 @@ export default function InputBox() {
       </div>
     </div>
   );
-    }
+        }
