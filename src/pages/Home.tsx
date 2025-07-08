@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import SuggestionButtons from '../components/SuggestionButtons';
 import InputBox from '../components/InputBox';
 
@@ -12,20 +12,30 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen w-screen bg-white dark:bg-black text-black dark:text-white px-4 flex flex-col items-center justify-center overflow-hidden">
-      {/* Dots Background */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="w-full h-full grid grid-cols-12 gap-4 opacity-10 animate-pulse-slow">
-          {[...Array(144)].map((_, i) => (
+    <div className="relative min-h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white px-4 flex flex-col items-center justify-center">
+      {/* Floating Dots */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 30 }).map((_, i) => {
+          const left = Math.random() * 100;
+          const top = Math.random() * 100;
+          const delay = Math.random() * 3;
+          const size = Math.random() * 8 + 4;
+
+          return (
             <div
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-primary animate-floatingDot"
+              className="absolute bg-primary rounded-full opacity-30 blur-sm animate-floatDot"
               style={{
-                animationDelay: `${(i % 10) * 0.2}s`,
+                left: `${left}%`,
+                top: `${top}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+                animationDelay: `${delay}s`,
+                animationDuration: `${2 + Math.random() * 2}s`,
               }}
             />
-          ))}
-        </div>
+          );
+        })}
       </div>
 
       {/* Main Content */}
@@ -34,7 +44,12 @@ export default function Home() {
         <p className="text-lg">Your smart assistant powered by AI.</p>
 
         <SuggestionButtons onSelect={handleSuggestionClick} currentInput={input} />
-        <InputBox externalInput={input} setExternalInput={setInput} inputRef={inputRef} />
+
+        <InputBox
+          externalInput={input}
+          setExternalInput={setInput}
+          inputRef={inputRef}
+        />
       </div>
     </div>
   );
