@@ -1,4 +1,4 @@
-import { Paperclip, Mic, FileText, ImageIcon, Camera, Brain, Search, Sparkles, ArrowUpRight, Loader2, Settings2, } from 'lucide-react'; import { useState } from 'react';
+import { Paperclip, Mic, FileText, ImageIcon, Camera, Brain, Search, Sparkles, ArrowUpRight, Loader2, Settings2, } from 'lucide-react'; import { useEffect, useState } from 'react';
 
 const utilityOptions = [ { icon: <Search size={18} />, label: 'Search', key: 'search' }, { icon: <Brain size={18} />, label: 'Reasoning', key: 'reasoning' }, { icon: <Sparkles size={18} />, label: 'Creative', key: 'creative' }, ];
 
