@@ -22,7 +22,11 @@ export default function Home() {
         <p className="text-lg">Your smart assistant powered by AI.</p>
 
         <SuggestionButtons onSelect={handleSuggestionClick} />
-        <InputBox externalInput={input} setExternalInput={setInput} inputRef={inputRef} />
+        <InputBox
+          externalInput={input}
+          setExternalInput={setInput}
+          inputRef={inputRef}
+        />
 
         <div className="mt-4">
           <ThemeToggle />
@@ -30,4 +34,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
+          }
