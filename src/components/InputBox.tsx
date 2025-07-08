@@ -122,15 +122,14 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
             </>
           )}
         </div>
-
-        {/* Mobile send button */}
-        <div className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white">
-          {isSending ? (
-            <Loader2 className="animate-spin w-5 h-5" />
-          ) : (
-            <ArrowUpRight size={20} />
-          )}
-        </div>
+{/* Mobile send button */}
+<div className="block md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white">
+  {isSending ? (
+    <Loader2 className="animate-spin w-5 h-5" />
+  ) : (
+    <ArrowUpRight size={20} />
+  )}
+</div>
       </button>
     </div>
 
