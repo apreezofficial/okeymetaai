@@ -1,4 +1,4 @@
-import { Paperclip, Mic, FileText, ImageIcon, Camera, Brain, Search, Sparkles, ArrowUpRight, Loader2, Settings2, } from 'lucide-react'; import { useEffect, useState } from 'react';
+import { Paperclip, Mic, FileText, ImageIcon, Camera, Brain, Search, Sparkles, ArrowUpRight, Loader2, Settings2, } from 'lucide-react'; import { useState, useEffect } from 'react';
 
 const utilityOptions = [ { icon: <Search size={18} />, label: 'Search', key: 'search' }, { icon: <Brain size={18} />, label: 'Reasoning', key: 'reasoning' }, { icon: <Sparkles size={18} />, label: 'Creative', key: 'creative' }, ];
 
@@ -93,7 +93,7 @@ return ( <div className="w-full max-w-4xl mx-auto px-4 pb-20 md:pb-0"> <div clas
           {isSending ? (
             <>
               <Loader2 className="animate-spin h-4 w-4" />
-              <span>Thinking...</span>
+              <span>Sending...</span>
             </>
           ) : (
             <>
