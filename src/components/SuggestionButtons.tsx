@@ -37,8 +37,10 @@ const dynamicSuggestions: Record<'code' | 'image' | 'concept', string[]> = {
 
 export default function SuggestionButtons({
   onSelect,
+  currentInput,
 }: {
   onSelect: (text: string) => void;
+  currentInput: string;
 }) {
   const [activeContext, setActiveContext] = useState<'code' | 'image' | 'concept' | null>(null);
 
@@ -67,7 +69,7 @@ export default function SuggestionButtons({
           {dynamicSuggestions[activeContext].map((tip, i) => (
             <button
               key={i}
-              onClick={() => onSelect((prev) => prev + tip)}
+              onClick={() => onSelect(currentInput + tip)}
               className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition-all"
             >
               {tip}
