@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Code, ImageIcon, Sparkles } from 'lucide-react';
 
 declare const OkeyMetaClient: any;
