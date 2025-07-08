@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Menu, Sun, Moon, Send, LogIn, LocateFixed } from 'lucide-react';
-import clsx from 'clsx';
 
 export default function Header() {
   const [dark, setDark] = useState(false);
