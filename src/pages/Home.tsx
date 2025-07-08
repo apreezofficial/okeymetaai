@@ -17,9 +17,6 @@ export default function Home() {
       <BackgroundDots />
 
       <div className="w-full max-w-2xl text-center space-y-6 z-10">
-        <h1 className="text-4xl font-bold text-primary drop-shadow">Welcome to Okey AI</h1>
-        <p className="text-lg text-white/80">Your smart assistant powered by AI.</p>
-
         {/* Suggestion Buttons */}
         <SuggestionButtons onSelect={handleSuggestionClick} />
 
@@ -32,11 +29,6 @@ export default function Home() {
           placeholder="Ask me anything..."
           className="w-full mt-6 px-4 py-3 rounded-xl bg-white/10 dark:bg-white/5 text-sm border border-primary outline-none focus:ring-2 focus:ring-primary transition"
         />
-
-        {/* Theme Toggle */}
-        <div className="mt-4">
-          <ThemeToggle />
-        </div>
       </div>
     </div>
   );
