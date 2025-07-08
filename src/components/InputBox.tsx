@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Paperclip,
   Mic,
@@ -12,6 +11,13 @@ import {
   Loader2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+
+type Props = {
+  externalInput: string;
+  setExternalInput: React.Dispatch<React.SetStateAction<string>>;
+  inputRef: React.RefObject<HTMLInputElement>;
+};
 
 const dynamicSuggestions: Record<'code' | 'image' | 'concept', string[]> = {
   code: ['a login page', 'a sorting algorithm', 'a weather API script'],
@@ -19,35 +25,47 @@ const dynamicSuggestions: Record<'code' | 'image' | 'concept', string[]> = {
   concept: ['quantum computing', 'AI alignment', 'web3 and decentralization'],
 };
 
-export default function InputBox() {
-  const [input, setInput] = useState('');
+export default function InputBox({ externalInput, setExternalInput, inputRef }: Props) {
   const [contextTag, setContextTag] = useState<'code' | 'image' | 'concept' | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
+  const handleContextClick = (type: 'code' | 'image' | 'concept') => {
+    const promptMap = {
+      code: 'Help me generate a code of ',
+      image: 'Create an image of ',
+      concept: 'Explain ',
+    };
+    setExternalInput(promptMap[type]);
+    setContextTag(type);
+    inputRef.current?.focus();
+  };
+
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!externalInput.trim()) return;
     setIsSending(true);
     setTimeout(() => {
+      console.log('Sent:', externalInput);
       setIsSending(false);
-      console.log('Sent:', input);
-      setInput('');
+      setExternalInput('');
       setContextTag(null);
     }, 1500);
   };
 
   return (
-    <div className="w-full mt-8">
+    <div className="w-full">
+      <div className="flex justify-center gap-2 mb-3 text-sm flex-wrap">
+        <button onClick={() => handleContextClick('code')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Code</button>
+        <button onClick={() => handleContextClick('image')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Image</button>
+        <button onClick={() => handleContextClick('concept')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Concept</button>
+      </div>
+
       <div className="relative w-full">
         <div className="flex items-center gap-2 p-3 bg-white/10 dark:bg-white/5 border border-primary rounded-xl backdrop-blur-md">
           <div className="relative">
-            <button
-              onClick={() => setShowUpload((prev) => !prev)}
-              className="p-2 rounded hover:bg-white/10 transition"
-            >
+            <button onClick={() => setShowUpload((prev) => !prev)} className="p-2 rounded hover:bg-white/10 transition">
               <Paperclip size={18} />
             </button>
-
             <AnimatePresence>
               {showUpload && (
                 <motion.div
@@ -76,8 +94,9 @@ export default function InputBox() {
 
           <input
             type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+            ref={inputRef}
+            value={externalInput}
+            onChange={(e) => setExternalInput(e.target.value)}
             placeholder="Ask me anything..."
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-white/40"
           />
@@ -96,7 +115,7 @@ export default function InputBox() {
 
           <button
             onClick={handleSend}
-            disabled={!input.trim() || isSending}
+            disabled={!externalInput.trim() || isSending}
             className="flex items-center justify-center gap-2 bg-primary text-black px-4 py-2 rounded-lg font-semibold hover:brightness-105 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSending ? (
@@ -113,12 +132,12 @@ export default function InputBox() {
           </button>
         </div>
 
-        {contextTag && (
+        {contextTag && dynamicSuggestions[contextTag] && (
           <div className="flex flex-wrap gap-2 mt-3 text-sm">
             {dynamicSuggestions[contextTag].map((sug, i) => (
               <button
                 key={i}
-                onClick={() => setInput((prev) => prev + sug)}
+                onClick={() => setExternalInput((prev) => prev + sug)}
                 className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
               >
                 {sug}
@@ -130,21 +149,3 @@ export default function InputBox() {
     </div>
   );
 }
-
-// Export handler for suggestions
-export const useInputBoxHandlers = () => {
-  const [input, setInput] = useState('');
-  const [contextTag, setContextTag] = useState<'code' | 'image' | 'concept' | null>(null);
-
-  const handleSuggestionClick = (type: 'code' | 'image' | 'concept') => {
-    const promptMap: Record<typeof type, string> = {
-      code: 'Help me generate a code of ',
-      image: 'Create an image of ',
-      concept: 'Explain ',
-    };
-    setInput(promptMap[type]);
-    setContextTag(type);
-  };
-
-  return { input, setInput, contextTag, handleSuggestionClick };
-};
