@@ -51,7 +51,7 @@ export default function SuggestionButtons({
 
     try {
       const client = new OkeyMetaClient({
-        auth_token: 'your_auth_token_here', 
+        auth_token: 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab', 
       });
 
       const prompt = getPromptTemplate(context);
