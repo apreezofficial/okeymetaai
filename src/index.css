@@ -10,9 +10,17 @@ body {
 }
 @keyframes floatDot {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    opacity: 0.4;
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-12px) scale(1.2);
+    opacity: 0.8;
   }
+}
+
+.animate-floatDot {
+  animation-name: floatDot;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
