@@ -19,27 +19,9 @@ type Props = {
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
-const dynamicSuggestions: Record<'code' | 'image' | 'concept', string[]> = {
-  code: ['a login page', 'a sorting algorithm', 'a weather API script'],
-  image: ['a cyberpunk city', 'a flying car concept', 'a retro-futuristic sunset'],
-  concept: ['quantum computing', 'AI alignment', 'web3 and decentralization'],
-};
-
 export default function InputBox({ externalInput, setExternalInput, inputRef }: Props) {
-  const [contextTag, setContextTag] = useState<'code' | 'image' | 'concept' | null>(null);
   const [showUpload, setShowUpload] = useState(false);
   const [isSending, setIsSending] = useState(false);
-
-  const handleContextClick = (type: 'code' | 'image' | 'concept') => {
-    const promptMap = {
-      code: 'Help me generate a code of ',
-      image: 'Create an image of ',
-      concept: 'Explain ',
-    };
-    setExternalInput(promptMap[type]);
-    setContextTag(type);
-    inputRef.current?.focus();
-  };
 
   const handleSend = () => {
     if (!externalInput.trim()) return;
@@ -48,18 +30,11 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
       console.log('Sent:', externalInput);
       setIsSending(false);
       setExternalInput('');
-      setContextTag(null);
     }, 1500);
   };
 
   return (
     <div className="w-full">
-      <div className="flex justify-center gap-2 mb-3 text-sm flex-wrap">
-        <button onClick={() => handleContextClick('code')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Code</button>
-        <button onClick={() => handleContextClick('image')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Image</button>
-        <button onClick={() => handleContextClick('concept')} className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition">Concept</button>
-      </div>
-
       <div className="relative w-full">
         <div className="flex items-center gap-2 p-3 bg-white/10 dark:bg-white/5 border border-primary rounded-xl backdrop-blur-md">
           <div className="relative">
@@ -131,21 +106,7 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
             )}
           </button>
         </div>
-
-        {contextTag && dynamicSuggestions[contextTag] && (
-          <div className="flex flex-wrap gap-2 mt-3 text-sm">
-            {dynamicSuggestions[contextTag].map((sug, i) => (
-              <button
-                key={i}
-                onClick={() => setExternalInput((prev) => prev + sug)}
-                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
-              >
-                {sug}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
-}
+            }
