@@ -12,7 +12,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white px-4 flex flex-col items-center justify-center">
+    <div className="relative min-h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white px-4 flex items-center justify-center">
       {/* Floating Dots */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {Array.from({ length: 30 }).map((_, i) => {
@@ -38,10 +38,11 @@ export default function Home() {
         })}
       </div>
 
-      {/* Main Content */}
-      <div className="w-full max-w-2xl space-y-6 z-10 text-center">
-
-        <SuggestionButtons onSelect={handleSuggestionClick} currentInput={input} />
+      {/* Main content */}
+      <div className="w-full max-w-2xl z-10 space-y-5">
+        <div className="mb-2">
+          <SuggestionButtons onSelect={handleSuggestionClick} currentInput={input} />
+        </div>
 
         <InputBox
           externalInput={input}
