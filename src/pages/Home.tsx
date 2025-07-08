@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import SuggestionButtons from '../components/SuggestionButtons';
 import InputBox from '../components/InputBox';
 
