@@ -1,39 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Code, ImageIcon, Sparkles } from 'lucide-react';
 
-type Suggestion = {
-  label: string;
-  icon: React.ReactNode;
-  context: 'code' | 'image' | 'concept';
-  text: string;
+declare const OkeyMetaClient: any;
+
+const icons = {
+  code: <Code size={16} />,
+  image: <ImageIcon size={16} />,
+  concept: <Sparkles size={16} />,
 };
 
-const suggestions: Suggestion[] = [
-  {
-    label: 'Generate Code',
-    icon: <Code size={16} />,
-    context: 'code',
-    text: 'Help me generate a code of ',
-  },
-  {
-    label: 'Create Image',
-    icon: <ImageIcon size={16} />,
-    context: 'image',
-    text: 'Create an image of ',
-  },
-  {
-    label: 'Explain Concept',
-    icon: <Sparkles size={16} />,
-    context: 'concept',
-    text: 'Explain ',
-  },
-];
-
-const dynamicSuggestions: Record<'code' | 'image' | 'concept', string[]> = {
-  code: ['a login page', 'a sorting algorithm', 'a weather API script'],
-  image: ['a cyberpunk city', 'a flying car concept', 'a retro-futuristic sunset'],
-  concept: ['quantum computing', 'AI alignment', 'web3 and decentralization'],
-};
+type ContextType = 'code' | 'image' | 'concept';
 
 export default function SuggestionButtons({
   onSelect,
@@ -42,31 +18,73 @@ export default function SuggestionButtons({
   onSelect: (text: string) => void;
   currentInput: string;
 }) {
-  const [activeContext, setActiveContext] = useState<'code' | 'image' | 'concept' | null>(null);
+  const [activeContext, setActiveContext] = useState<ContextType | null>(null);
+  const [tips, setTips] = useState<string[]>([]);
 
-  const handleClick = (suggestion: Suggestion) => {
-    setActiveContext(suggestion.context);
-    onSelect(suggestion.text);
+  const handleClick = async (context: ContextType) => {
+    setActiveContext(context);
+    onSelect(getBasePrompt(context));
+
+    try {
+      const client = new OkeyMetaClient();
+      const prompt = getPromptTemplate(context);
+      const response = await client.textCompletion({
+        model: 'okeyai3.0-vanguard',
+        input: prompt,
+      });
+
+      const list = response.split('\n').filter(Boolean);
+      setTips(list);
+    } catch (err: any) {
+      console.error('Failed to fetch suggestions:', err.message);
+      setTips([]);
+    }
+  };
+
+  const getBasePrompt = (ctx: ContextType) => {
+    switch (ctx) {
+      case 'code':
+        return 'Help me generate a code of ';
+      case 'image':
+        return 'Create an image of ';
+      case 'concept':
+        return 'Explain ';
+    }
+  };
+
+  const getPromptTemplate = (ctx: ContextType) => {
+    switch (ctx) {
+      case 'code':
+        return 'Give me 3 popular coding ideas a beginner can try.';
+      case 'image':
+        return 'List 3 creative image prompts I can generate.';
+      case 'concept':
+        return 'Suggest 3 interesting tech concepts to explain.';
+    }
   };
 
   return (
     <div className="w-full">
       <div className="flex flex-wrap justify-center gap-3 mt-6">
-        {suggestions.map((s, i) => (
+        {(['code', 'image', 'concept'] as ContextType[]).map((context) => (
           <button
-            key={i}
-            onClick={() => handleClick(s)}
+            key={context}
+            onClick={() => handleClick(context)}
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 dark:bg-white/5 text-sm backdrop-blur-md border border-white/10 hover:bg-primary hover:text-black transition-all duration-300 shadow hover:scale-105"
           >
-            {s.icon}
-            {s.label}
+            {icons[context]}
+            {context === 'code'
+              ? 'Generate Code'
+              : context === 'image'
+              ? 'Create Image'
+              : 'Explain Concept'}
           </button>
         ))}
       </div>
 
-      {activeContext && (
+      {activeContext && tips.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2 mt-4 text-sm">
-          {dynamicSuggestions[activeContext].map((tip, i) => (
+          {tips.map((tip, i) => (
             <button
               key={i}
               onClick={() => onSelect(currentInput + tip)}
@@ -79,4 +97,4 @@ export default function SuggestionButtons({
       )}
     </div>
   );
-}
+        }
