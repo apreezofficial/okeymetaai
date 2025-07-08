@@ -26,7 +26,7 @@ export default function InputBox() {
   const [isSending, setIsSending] = useState(false);
 
   const handleSuggestionClick = (type: 'code' | 'image' | 'concept') => {
-    const promptMap: Record<'code' | 'image' | 'concept', string> = {
+    const promptMap: Record<typeof type, string> = {
       code: 'Help me generate a code of ',
       image: 'Create an image of ',
       concept: 'Explain ',
@@ -48,27 +48,6 @@ export default function InputBox() {
 
   return (
     <div className="w-full mt-8">
-      <div className="flex justify-center gap-2 mb-3 text-sm">
-        <button
-          onClick={() => handleSuggestionClick('code')}
-          className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
-        >
-          Code
-        </button>
-        <button
-          onClick={() => handleSuggestionClick('image')}
-          className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
-        >
-          Image
-        </button>
-        <button
-          onClick={() => handleSuggestionClick('concept')}
-          className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
-        >
-          Concept
-        </button>
-      </div>
-
       <div className="relative w-full">
         <div className="flex items-center gap-2 p-3 bg-white/10 dark:bg-white/5 border border-primary rounded-xl backdrop-blur-md">
           <div className="relative">
@@ -78,6 +57,7 @@ export default function InputBox() {
             >
               <Paperclip size={18} />
             </button>
+
             <AnimatePresence>
               {showUpload && (
                 <motion.div
@@ -143,7 +123,7 @@ export default function InputBox() {
           </button>
         </div>
 
-        {contextTag && dynamicSuggestions[contextTag] && (
+        {contextTag && (
           <div className="flex flex-wrap gap-2 mt-3 text-sm">
             {dynamicSuggestions[contextTag].map((sug, i) => (
               <button
@@ -159,4 +139,22 @@ export default function InputBox() {
       </div>
     </div>
   );
-        }
+}
+
+// Export handler for suggestions
+export const useInputBoxHandlers = () => {
+  const [input, setInput] = useState('');
+  const [contextTag, setContextTag] = useState<'code' | 'image' | 'concept' | null>(null);
+
+  const handleSuggestionClick = (type: 'code' | 'image' | 'concept') => {
+    const promptMap: Record<typeof type, string> = {
+      code: 'Help me generate a code of ',
+      image: 'Create an image of ',
+      concept: 'Explain ',
+    };
+    setInput(promptMap[type]);
+    setContextTag(type);
+  };
+
+  return { input, setInput, contextTag, handleSuggestionClick };
+};
