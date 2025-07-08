@@ -1,28 +1,28 @@
-import ThemeToggle from '../components/ThemeToggle';
+import { useState, useRef } from 'react';
 import SuggestionButtons from '../components/SuggestionButtons';
-import BackgroundDots from '../components/BackgroundDots';
 import InputBox from '../components/InputBox';
+import BackgroundDots from '../components/BackgroundDots';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Home() {
+  const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSuggestionClick = (text: string) => {
+    setInput(text);
+    inputRef.current?.focus();
+  };
+
   return (
-    <div className="relative min-h-screen bg-white dark:bg-black text-black dark:text-white flex items-center justify-center px-4">
+    <div className="relative min-h-screen bg-white dark:bg-black text-black dark:text-white px-4 flex flex-col items-center justify-center">
       <BackgroundDots />
 
-      <div className="w-full max-w-2xl text-center space-y-6 z-10">
+      <div className="w-full max-w-2xl space-y-6 z-10 text-center">
+        <h1 className="text-4xl font-bold text-primary drop-shadow">Welcome to Okey AI</h1>
+        <p className="text-lg">Your smart assistant powered by AI.</p>
 
-        {/* Suggestion Buttons */}
-        <SuggestionButtons onSelect={(type) => {
-          const map: any = {
-            'Generate Code': 'Help me generate a code of ',
-            'Create Image': 'Create an image of ',
-            'Explain Concept': 'Explain ',
-          };
-          const text = map[type] || '';
-          const event = new CustomEvent('suggestion-click', { detail: text });
-          window.dispatchEvent(event);
-        }} />
-
-        <InputBox />
+        <SuggestionButtons onSelect={handleSuggestionClick} />
+        <InputBox externalInput={input} setExternalInput={setInput} inputRef={inputRef} />
 
         <div className="mt-4">
           <ThemeToggle />
