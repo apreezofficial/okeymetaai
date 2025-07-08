@@ -35,7 +35,7 @@ export default function SuggestionButtons({
         <button
           key={i}
           onClick={() => onSelect(s.text)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 dark:bg-white/5 text-sm backdrop-blur-md border border-white/10 hover:bg-primary hover:text-black dark:hover:text-black transition-all duration-300 shadow hover:scale-105"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 dark:bg-white/5 text-sm backdrop-blur-md border border-white/10 hover:bg-primary hover:text-black transition-all duration-300 shadow hover:scale-105"
         >
           {s.icon}
           {s.label}
