@@ -8,3 +8,11 @@ html {
 body {
   @apply bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300;
 }
+@keyframes floatDot {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
