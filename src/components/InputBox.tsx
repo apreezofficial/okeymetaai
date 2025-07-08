@@ -25,16 +25,6 @@ export default function InputBox() {
   const [showUpload, setShowUpload] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  const handleSuggestionClick = (type: 'code' | 'image' | 'concept') => {
-    const promptMap: Record<typeof type, string> = {
-      code: 'Help me generate a code of ',
-      image: 'Create an image of ',
-      concept: 'Explain ',
-    };
-    setInput(promptMap[type]);
-    setContextTag(type);
-  };
-
   const handleSend = () => {
     if (!input.trim()) return;
     setIsSending(true);
