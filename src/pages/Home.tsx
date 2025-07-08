@@ -18,10 +18,12 @@ export default function Home() {
       <BackgroundDots />
 
       <div className="w-full max-w-2xl space-y-6 z-10 text-center">
-        <h1 className="text-4xl font-bold text-primary drop-shadow">Welcome to Okey AI</h1>
-        <p className="text-lg">Your smart assistant powered by AI.</p>
 
-        <SuggestionButtons onSelect={handleSuggestionClick} />
+        <SuggestionButtons
+          onSelect={handleSuggestionClick}
+          currentInput={input}
+        />
+
         <InputBox
           externalInput={input}
           setExternalInput={setInput}
@@ -34,4 +36,4 @@ export default function Home() {
       </div>
     </div>
   );
-          }
+}
