@@ -1,6 +1,6 @@
 export default function BackgroundDots() {
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
       <div className="w-full h-full relative">
         {[...Array(20)].map((_, i) => (
           <div
