@@ -33,91 +33,112 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
   };
 
   return (
-    <div className="w-full">
-      <div className="relative w-full">
-        <div className="flex items-center gap-2 p-3 bg-white/10 dark:bg-white/5 border border-primary rounded-xl backdrop-blur-md">
-          {/* Upload button and menu */}
-          <div className="relative">
-            <button
-              onClick={() => setShowUpload((prev) => !prev)}
-              className="p-2 rounded hover:bg-white/10 transition"
-            >
-              <Paperclip size={18} />
+    <div className="w-full max-w-4xl mx-auto px-4">
+  <div className="relative w-full">
+    <div className="flex items-center gap-2 p-1 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm transition-all focus-within:border-primary focus-within:shadow-md focus-within:shadow-primary/10">
+      {/* Attachment dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setShowUpload((prev) => !prev)}
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          aria-label="Attach files"
+        >
+          <Paperclip size={20} />
+        </button>
+        {showUpload && (
+          <div className="absolute left-0 bottom-12 mb-2 bg-white dark:bg-gray-800 text-sm rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg z-10 overflow-hidden w-48">
+            <button className="flex items-center gap-3 px-4 py-3 w-full hover:bg-gray-50 dark:hover:bg-gray-700 text-left">
+              <FileText size={18} className="text-gray-500 dark:text-gray-400" /> 
+              <span>Upload File</span>
             </button>
-            {showUpload && (
-              <div className="absolute left-0 top-10 bg-white dark:bg-black text-sm rounded-md border border-white/10 shadow-xl z-10 overflow-hidden">
-                <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
-                  <FileText size={16} /> Upload File
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
-                  <ImageIcon size={16} /> Upload Image
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
-                  <Camera size={16} /> Use Camera
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Mic button */}
-          <button className="p-2 rounded hover:bg-white/10 transition">
-            <Mic size={18} />
-          </button>
-
-          {/* Input */}
-          <input
-            type="text"
-            ref={inputRef}
-            value={externalInput}
-            onChange={(e) => setExternalInput(e.target.value)}
-            placeholder="Ask me anything..."
-            className="flex-1 bg-transparent outline-none text-sm placeholder:text-white/40"
-          />
-
-          {/* Extra utility icons on desktop only */}
-          <div className="hidden md:flex gap-2">
-            <button title="Search" className="p-2 rounded hover:bg-white/10 transition">
-              <Search size={16} />
+            <button className="flex items-center gap-3 px-4 py-3 w-full hover:bg-gray-50 dark:hover:bg-gray-700 text-left">
+              <ImageIcon size={18} className="text-gray-500 dark:text-gray-400" /> 
+              <span>Upload Image</span>
             </button>
-            <button title="Reason" className="p-2 rounded hover:bg-white/10 transition">
-              <Brain size={16} />
-            </button>
-            <button title="Think" className="p-2 rounded hover:bg-white/10 transition">
-              <Sparkles size={16} />
+            <button className="flex items-center gap-3 px-4 py-3 w-full hover:bg-gray-50 dark:hover:bg-gray-700 text-left">
+              <Camera size={18} className="text-gray-500 dark:text-gray-400" /> 
+              <span>Use Camera</span>
             </button>
           </div>
-
-          {/* Send Button - desktop full, mobile icon only */}
-          <button
-            onClick={handleSend}
-            disabled={!externalInput.trim() || isSending}
-            className="bg-primary text-black font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {/* Desktop full button */}
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg hover:brightness-105">
-              {isSending ? (
-                <>
-                  <Loader2 className="animate-spin h-4 w-4" />
-                  Thinking...
-                </>
-              ) : (
-                <>
-                  Send <ArrowUpRight size={16} />
-                </>
-              )}
-            </div>
-
-            {/* Mobile icon-only circular button */}
-            <div className="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:brightness-105">
-              {isSending ? (
-                <Loader2 className="animate-spin w-5 h-5" />
-              ) : (
-                <ArrowUpRight size={18} />
-              )}
-            </div>
-          </button>
-        </div>
+        )}
       </div>
+
+      {/* Voice input button */}
+      <button 
+        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+        aria-label="Voice input"
+      >
+        <Mic size={20} />
+      </button>
+
+      {/* Main input field */}
+      <input
+        type="text"
+        ref={inputRef}
+        value={externalInput}
+        onChange={(e) => setExternalInput(e.target.value)}
+        placeholder="Ask anything..."
+        className="flex-1 bg-transparent outline-none text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 py-3 px-2"
+        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+      />
+
+      {/* Utility buttons*/}
+      <div className="hidden md:flex items-center gap-1 mr-2">
+        <button 
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400 hover:text-primary"
+          title="Search"
+        >
+          <Search size={18} />
+        </button>
+        <button 
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400 hover:text-primary"
+          title="Reasoning mode"
+        >
+          <Brain size={18} />
+        </button>
+        <button 
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-gray-500 dark:text-gray-400 hover:text-primary"
+          title="Creative mode"
+        >
+          <Sparkles size={18} />
+        </button>
+      </div>
+   <button
+        onClick={handleSend}
+        disabled={!externalInput.trim() || isSending}
+        className={`ml-auto transition-all duration-200 ${!externalInput.trim() ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+        aria-label="Send message"
+      >
+        <div className="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white font-medium">
+          {isSending ? (
+            <>
+              <Loader2 className="animate-spin h-4 w-4" />
+              <span>Thinking...</span>
+            </>
+          ) : (
+            <>
+              <span>Send</span>
+              <ArrowUpRight size={16} />
+            </>
+          )}
+        </div>
+
+        {/* Mobile send button */}
+        <div className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white">
+          {isSending ? (
+            <Loader2 className="animate-spin w-5 h-5" />
+          ) : (
+            <ArrowUpRight size={20} />
+          )}
+        </div>
+      </button>
     </div>
+
+    {/* Help text below input */}
+    <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+      Press Enter to send • Shift+Enter for new line
+    </div>
+  </div>
+</div>
   );
 }
