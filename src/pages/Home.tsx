@@ -4,8 +4,7 @@ import InputBox from '../components/InputBox';
 
 export default function Home() {
   const [input, setInput] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
+const inputRef = useRef<HTMLTextAreaElement>(null);
   const handleSuggestionClick = (text: string) => {
     setInput(text);
     inputRef.current?.focus();
