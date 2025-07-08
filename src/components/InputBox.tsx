@@ -10,7 +10,6 @@ import {
   ArrowUpRight,
   Loader2,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
 type Props = {
@@ -37,36 +36,35 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
     <div className="w-full">
       <div className="relative w-full">
         <div className="flex items-center gap-2 p-3 bg-white/10 dark:bg-white/5 border border-primary rounded-xl backdrop-blur-md">
+          {/* Upload button and menu */}
           <div className="relative">
-            <button onClick={() => setShowUpload((prev) => !prev)} className="p-2 rounded hover:bg-white/10 transition">
+            <button
+              onClick={() => setShowUpload((prev) => !prev)}
+              className="p-2 rounded hover:bg-white/10 transition"
+            >
               <Paperclip size={18} />
             </button>
-            <AnimatePresence>
-              {showUpload && (
-                <motion.div
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 5 }}
-                  className="absolute left-0 top-10 bg-white dark:bg-black text-sm rounded-md border border-white/10 shadow-xl z-10 overflow-hidden"
-                >
-                  <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
-                    <FileText size={16} /> Upload File
-                  </button>
-                  <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
-                    <ImageIcon size={16} /> Upload Image
-                  </button>
-                  <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
-                    <Camera size={16} /> Use Camera
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {showUpload && (
+              <div className="absolute left-0 top-10 bg-white dark:bg-black text-sm rounded-md border border-white/10 shadow-xl z-10 overflow-hidden">
+                <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
+                  <FileText size={16} /> Upload File
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
+                  <ImageIcon size={16} /> Upload Image
+                </button>
+                <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-primary hover:text-black">
+                  <Camera size={16} /> Use Camera
+                </button>
+              </div>
+            )}
           </div>
 
+          {/* Mic button */}
           <button className="p-2 rounded hover:bg-white/10 transition">
             <Mic size={18} />
           </button>
 
+          {/* Input */}
           <input
             type="text"
             ref={inputRef}
@@ -76,6 +74,7 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-white/40"
           />
 
+          {/* Extra utility icons on desktop only */}
           <div className="hidden md:flex gap-2">
             <button title="Search" className="p-2 rounded hover:bg-white/10 transition">
               <Search size={16} />
@@ -88,25 +87,37 @@ export default function InputBox({ externalInput, setExternalInput, inputRef }: 
             </button>
           </div>
 
+          {/* Send Button - desktop full, mobile icon only */}
           <button
             onClick={handleSend}
             disabled={!externalInput.trim() || isSending}
-            className="flex items-center justify-center gap-2 bg-primary text-black px-4 py-2 rounded-lg font-semibold hover:brightness-105 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="bg-primary text-black font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {isSending ? (
-              <>
-                <Loader2 className="animate-spin h-4 w-4" />
-                Thinking...
-              </>
-            ) : (
-              <>
-                Send
-                <ArrowUpRight size={16} />
-              </>
-            )}
+            {/* Desktop full button */}
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg hover:brightness-105">
+              {isSending ? (
+                <>
+                  <Loader2 className="animate-spin h-4 w-4" />
+                  Thinking...
+                </>
+              ) : (
+                <>
+                  Send <ArrowUpRight size={16} />
+                </>
+              )}
+            </div>
+
+            {/* Mobile icon-only circular button */}
+            <div className="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:brightness-105">
+              {isSending ? (
+                <Loader2 className="animate-spin w-5 h-5" />
+              ) : (
+                <ArrowUpRight size={18} />
+              )}
+            </div>
           </button>
         </div>
       </div>
     </div>
   );
-            }
+}
