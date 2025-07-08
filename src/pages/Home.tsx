@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import ThemeToggle from '../components/ThemeToggle';
-import BackgroundDots from '../components/BackgroundDots';
 import { Code, ImageIcon, Sparkles } from 'lucide-react';
 
 const suggestions = [
@@ -20,8 +19,6 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-black text-black dark:text-white flex items-center justify-center px-4">
-      <BackgroundDots />
-
       <div className="w-full max-w-2xl text-center space-y-6 z-10">
         <h1 className="text-4xl font-bold text-primary drop-shadow">Welcome to Okey AI</h1>
         <p className="text-lg">Your smart assistant powered by AI.</p>
