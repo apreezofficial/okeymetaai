@@ -34,7 +34,7 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-6">
           <button className="flex items-center gap-1 text-sm hover:text-primary transition">
             <LocateFixed size={16} />
-            Track Order
+            Search
           </button>
           <button className="flex items-center gap-1 text-sm hover:text-primary transition">
             <LogIn size={16} />
