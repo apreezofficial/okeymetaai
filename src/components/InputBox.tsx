@@ -72,13 +72,13 @@ export default function InputBox({
       });
 
       const text = await response.text();
-      let assistantReply = '';
+let assistantReply = '';
 
-      try {
-        const json = JSON.parse(text);
-        assistantReply = json?.output ?? text;
-      } catch {
-        assistantReply = text;
+try {
+  const json = JSON.parse(text);
+  assistantReply = json?.message || json?.output || text;
+} catch {
+  assistantReply = text;
       }
 
       const assistantMessage = {
