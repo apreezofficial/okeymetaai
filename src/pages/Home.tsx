@@ -1,17 +1,18 @@
 import { useRef, useState } from 'react';
 import SuggestionButtons from '../components/SuggestionButtons';
 import InputBox from '../components/InputBox';
-
+import ChatHistory from '../components/ChatHistory'; 
 export default function Home() {
   const [input, setInput] = useState('');
-const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
   const handleSuggestionClick = (text: string) => {
     setInput(text);
     inputRef.current?.focus();
   };
 
   return (
-    <div className="relative min-h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white px-4 flex items-center justify-center">
+    <div className="relative min-h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white px-4 pt-8 flex flex-col items-center">
       {/* Floating Dots */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {Array.from({ length: 30 }).map((_, i) => {
@@ -37,12 +38,11 @@ const inputRef = useRef<HTMLTextAreaElement>(null);
         })}
       </div>
 
-      {/* Main content */}
+      {/* Main Content */}
       <div className="w-full max-w-2xl z-10 space-y-5">
-        <div className="mb-2">
-          <SuggestionButtons onSelect={handleSuggestionClick} currentInput={input} />
-        </div>
+        <SuggestionButtons onSelect={handleSuggestionClick} currentInput={input} />
 
+        <ChatHistory /> 
         <InputBox
           externalInput={input}
           setExternalInput={setInput}
@@ -51,4 +51,4 @@ const inputRef = useRef<HTMLTextAreaElement>(null);
       </div>
     </div>
   );
-}
+                                        }
