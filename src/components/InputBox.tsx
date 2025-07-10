@@ -35,7 +35,7 @@ export default function InputBox({
   const [selectedUtilities, setSelectedUtilities] = useState<string[]>([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const OKEYMETA_AUTH_TOKEN = 'sk-8e93b9ad8b3c44e9bba0c737a0c12345'; // Replace with your real token
+  const OKEYMETA_AUTH_TOKEN = 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab'; 
   const OKEYMETA_MODEL = 'okeyai3.0-vanguard';
 
   const toggleUtility = (key: string) => {
