@@ -55,8 +55,7 @@ export default function Home() {
         )}
 
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-36">
-          <ChatHistory />
-        </div>
+       <ChatHistory setExternalInput={setInput} /> </div>
 
         <div className="fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 px-4 py-3">
           <InputBox
