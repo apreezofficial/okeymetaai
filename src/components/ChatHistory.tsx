@@ -104,102 +104,114 @@ export default function ChatHistory({
 
   return (
     <div className="max-w-3xl mx-auto px-4 pb-32 space-y-6">
-      {messages.map((msg, index) => (
-        <div
-          key={index}
-          className={`group relative px-5 py-4 rounded-xl transition-all max-w-full text-sm sm:text-base shadow-sm border ${
-            msg.role === 'user'
-              ? 'bg-neutral-100 dark:bg-neutral-900 ml-auto text-right border-neutral-200 dark:border-neutral-800'
-              : 'bg-[#f8f8f8] dark:bg-[#1a1a1a] mr-auto text-left border-neutral-200 dark:border-neutral-800'
-          }`}
-        >
-          <div className="text-xs text-neutral-400 mb-1 flex justify-between">
-            <span>
-              {msg.role === 'user' ? 'You' : 'Okeymeta'} •{' '}
-              {new Date(msg.timestamp).toLocaleTimeString()}
-            </span>
-            {index === messages.length - 1 && fetchDuration !== null && (
-              <span className="text-xs text-neutral-500">
-                {fetchDuration}s
+      {messages.map((msg, index) => {
+        const isUser = msg.role === 'user';
+        return (
+          <div
+            key={index}
+            className={`group relative px-5 py-4 rounded-xl transition-all max-w-[90%] text-sm sm:text-base shadow-sm border ${
+              isUser
+                ? 'ml-auto text-right bg-primary/10 dark:bg-yellow-400/10 border-yellow-300/20 dark:border-yellow-500/20'
+                : 'mr-auto text-left bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800'
+            }`}
+          >
+            {/* Timestamp and role */}
+            <div className="text-xs text-neutral-400 mb-1 flex justify-between">
+              <span>
+                {isUser ? 'You' : 'Okeymeta'} •{' '}
+                {new Date(msg.timestamp).toLocaleTimeString()}
               </span>
-            )}
-          </div>
+              {index === messages.length - 1 && fetchDuration !== null && (
+                <span className="text-xs text-neutral-500">
+                  {fetchDuration}s
+                </span>
+              )}
+            </div>
 
-          <div className="whitespace-pre-line leading-relaxed">{msg.content}</div>
+            {/* Message content */}
+            <div className="whitespace-pre-line leading-relaxed">{msg.content}</div>
 
-          {msg.role === 'assistant' && (
-            <div className="mt-3 flex gap-4 items-center text-neutral-500 text-xs">
-              <button
-                onClick={() => handleLike(index)}
-                className={`hover:text-green-500 ${
-                  msg.liked ? 'text-green-600' : ''
-                }`}
-                title="Like"
-              >
-                <ThumbsUp size={16} />
-              </button>
+            {/* Assistant actions */}
+            {!isUser && (
+              <div className="mt-3 flex gap-4 items-center text-neutral-500 text-xs">
+                <button
+                  onClick={() => handleLike(index)}
+                  className={`hover:text-green-500 ${
+                    msg.liked ? 'text-green-600' : ''
+                  }`}
+                  title="Like"
+                >
+                  <ThumbsUp size={16} />
+                </button>
 
-              <button
-                onClick={() => handleDislike(index)}
-                className={`hover:text-red-500 ${
-                  msg.disliked ? 'text-red-600' : ''
-                }`}
-                title="Dislike"
-              >
-                <ThumbsDown size={16} />
-              </button>
+                <button
+                  onClick={() => handleDislike(index)}
+                  className={`hover:text-red-500 ${
+                    msg.disliked ? 'text-red-600' : ''
+                  }`}
+                  title="Dislike"
+                >
+                  <ThumbsDown size={16} />
+                </button>
 
-              <button
-                onClick={() => handleRegenerate(msg.content)}
-                className="hover:text-yellow-500"
-                title="Regenerate"
-              >
-                <RotateCw size={16} />
-              </button>
+                <button
+                  onClick={() => handleRegenerate(msg.content)}
+                  className="hover:text-yellow-500"
+                  title="Regenerate"
+                >
+                  <RotateCw size={16} />
+                </button>
 
-              <button
-                onClick={() => handleCopy(index, msg.content)}
-                className="hover:text-blue-500"
-                title="Copy"
-              >
-                {copiedIndex === index ? <Check size={16} /> : <Copy size={16} />}
-              </button>
+                <button
+                  onClick={() => handleCopy(index, msg.content)}
+                  className="hover:text-blue-500"
+                  title="Copy"
+                >
+                  {copiedIndex === index ? (
+                    <Check size={16} />
+                  ) : (
+                    <Copy size={16} />
+                  )}
+                </button>
 
-              <button
-                onClick={() => handleDelete(index)}
-                className="hover:text-gray-400 ml-auto"
-                title="Delete"
-              >
-                <Trash2 size={16} />
-              </button>
+                <button
+                  onClick={() => handleDelete(index)}
+                  className="hover:text-gray-400 ml-auto"
+                  title="Delete"
+                >
+                  <Trash2 size={16} />
+                </button>
 
-              <div className="relative">
-                <button className="hover:text-gray-400" title="More">
+                <button
+                  className="hover:text-gray-400"
+                  title="More actions"
+                >
                   <MoreVertical size={16} />
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* Like/Dislike Reason Options */}
-          {showReasons &&
-            showReasons.index === index &&
-            (showReasons.type === 'like' ? likeReasons : dislikeReasons).map(
-              (reason, i) => (
-                <button
-                  key={i}
-                  onClick={() =>
-                    handleSelectReason(index, reason, showReasons.type)
-                  }
-                  className="block mt-2 text-xs px-3 py-1 rounded-full bg-white/5 hover:bg-primary hover:text-black transition-all border border-white/10"
-                >
-                  {reason}
-                </button>
-              )
             )}
-        </div>
-      ))}
 
+            {/* Like/Dislike feedback options */}
+            {showReasons &&
+              showReasons.index === index &&
+              (showReasons.type === 'like' ? likeReasons : dislikeReasons).map(
+                (reason, i) => (
+                  <button
+                    key={i}
+                    onClick={() =>
+                      handleSelectReason(index, reason, showReasons.type)
+                    }
+                    className="block mt-2 text-xs px-3 py-1 rounded-full bg-white/5 hover:bg-primary hover:text-black transition-all border border-white/10"
+                  >
+                    {reason}
+                  </button>
+                )
+              )}
+          </div>
+        );
+      })}
+
+      {/* Typing indicator */}
       {isTyping && (
         <div className="animate-pulse px-5 py-4 rounded-xl text-left bg-[#f8f8f8] dark:bg-[#1a1a1a] border border-neutral-200 dark:border-neutral-800 max-w-full text-sm sm:text-base">
           <span className="text-neutral-500">Okeymeta is typing...</span>
