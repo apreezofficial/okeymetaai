@@ -4,6 +4,7 @@ import {
   ThumbsDown,
   RotateCw,
   Trash2,
+  Copy,
 } from 'lucide-react';
 
 type Message = {
@@ -20,12 +21,19 @@ export default function ChatHistory({
   setExternalInput: (value: string) => void;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('chatHistory');
-    if (stored) {
-      setMessages(JSON.parse(stored));
-    }
+    const interval = setInterval(() => {
+      const stored = localStorage.getItem('chatHistory');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setMessages(parsed);
+        const lastMsg = parsed[parsed.length - 1];
+        setIsTyping(lastMsg?.role === 'assistant' && lastMsg.content === '...');
+      }
+    }, 100);
+    return () => clearInterval(interval);
   }, []);
 
   const updateMessages = (newMsgs: Message[]) => {
@@ -54,31 +62,40 @@ export default function ChatHistory({
 
   const handleDelete = (index: number) => {
     const updated = [...messages];
-    updated.splice(index, 1);
+    if (
+      updated[index].role === 'assistant' &&
+      index > 0 &&
+      updated[index - 1].role === 'user'
+    ) {
+      updated.splice(index - 1, 2); // Delete user + assistant
+    } else {
+      updated.splice(index, 1);
+    }
     updateMessages(updated);
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-28 space-y-4">
+    <div className="max-w-3xl mx-auto px-4 pb-32 space-y-6">
       {messages.map((msg, index) => (
         <div
           key={index}
-          className={`group relative p-4 rounded-xl shadow-md transition-all max-w-[90%] ${
+          className={`group relative px-5 py-4 rounded-xl transition-all max-w-full text-sm sm:text-base shadow-sm border ${
             msg.role === 'user'
-              ? 'bg-blue-100 dark:bg-blue-900 ml-auto text-right'
-              : 'bg-gray-100 dark:bg-gray-800 mr-auto text-left'
+              ? 'bg-neutral-100 dark:bg-neutral-900 ml-auto text-right border-transparent'
+              : 'bg-[#f8f8f8] dark:bg-[#1a1a1a] mr-auto text-left border-neutral-200 dark:border-neutral-800'
           }`}
         >
-          <div className="text-sm text-gray-500 mb-1">
-            {msg.role === 'user' ? 'You' : 'AI'} •{' '}
+          <div className="text-xs text-neutral-400 mb-1">
+            {msg.role === 'user' ? 'You' : 'Okeymeta'} •{' '}
             {new Date(msg.timestamp).toLocaleTimeString()}
           </div>
 
-          <div className="text-base whitespace-pre-line">{msg.content}</div>
+          <div className="whitespace-pre-line leading-relaxed">
+            {msg.content}
+          </div>
 
-          {/* Action Buttons */}
           {msg.role === 'assistant' && (
-            <div className="mt-3 flex gap-3 items-center text-gray-500 dark:text-gray-400 text-sm">
+            <div className="mt-3 flex gap-4 items-center text-neutral-500 text-xs">
               <button
                 onClick={() => handleLike(index)}
                 className={`hover:text-green-500 ${
@@ -86,9 +103,8 @@ export default function ChatHistory({
                 }`}
                 title="Like"
               >
-                <ThumbsUp size={18} />
+                <ThumbsUp size={16} />
               </button>
-
               <button
                 onClick={() => handleDislike(index)}
                 className={`hover:text-red-500 ${
@@ -96,28 +112,39 @@ export default function ChatHistory({
                 }`}
                 title="Dislike"
               >
-                <ThumbsDown size={18} />
+                <ThumbsDown size={16} />
               </button>
-
               <button
                 onClick={() => handleRegenerate(msg.content)}
                 className="hover:text-yellow-500"
                 title="Regenerate"
               >
-                <RotateCw size={18} />
+                <RotateCw size={16} />
               </button>
-
+              <button
+                onClick={() => navigator.clipboard.writeText(msg.content)}
+                className="hover:text-blue-500"
+                title="Copy to clipboard"
+              >
+                <Copy size={16} />
+              </button>
               <button
                 onClick={() => handleDelete(index)}
-                className="hover:text-gray-500 ml-auto"
+                className="hover:text-gray-400 ml-auto"
                 title="Delete message"
               >
-                <Trash2 size={18} />
+                <Trash2 size={16} />
               </button>
             </div>
           )}
         </div>
       ))}
+
+      {isTyping && (
+        <div className="animate-pulse px-5 py-4 rounded-xl text-left bg-[#f8f8f8] dark:bg-[#1a1a1a] border border-neutral-200 dark:border-neutral-800 max-w-full text-sm sm:text-base">
+          <span className="text-neutral-500">Okeymeta is typing...</span>
+        </div>
+      )}
     </div>
   );
-}
+      }
