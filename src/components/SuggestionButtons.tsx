@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Code, ImageIcon, Sparkles } from 'lucide-react';
 
 declare const OkeyMetaClient: any;
+
 const icons = {
   code: <Code size={16} />,
   image: <ImageIcon size={16} />,
@@ -20,6 +21,17 @@ export default function SuggestionButtons({
   const [activeContext, setActiveContext] = useState<ContextType | null>(null);
   const [tips, setTips] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasChatHistory, setHasChatHistory] = useState(false); // 👈
+
+  useEffect(() => {
+    const stored = localStorage.getItem('chatHistory');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        setHasChatHistory(true); // 👈 set to true if chats exist
+      }
+    }
+  }, []);
 
   const getBasePrompt = (ctx: ContextType) => {
     switch (ctx) {
@@ -51,17 +63,14 @@ export default function SuggestionButtons({
 
     try {
       const client = new OkeyMetaClient({
-        auth_token: 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab', 
+        auth_token: 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab',
       });
 
       const prompt = getPromptTemplate(context);
-
       const response = await client.textCompletion({
         model: 'okeyai3.0-vanguard',
         input: prompt,
       });
-
-      console.log('OkeyMeta AI Response:', response);
 
       const tipsList = response
         .split('\n')
@@ -76,6 +85,8 @@ export default function SuggestionButtons({
       setLoading(false);
     }
   };
+
+  if (hasChatHistory) return null;
 
   return (
     <div className="w-full">
@@ -113,4 +124,4 @@ export default function SuggestionButtons({
       )}
     </div>
   );
-        }
+}
