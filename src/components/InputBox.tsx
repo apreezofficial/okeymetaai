@@ -12,7 +12,6 @@ import {
   Settings2,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { OkeyMetaClient } from 'okeymeta-ai-sdk';
 
 const utilityOptions = [
   { icon: <Search size={18} />, label: 'Search', key: 'search' },
