@@ -66,9 +66,9 @@ export default function InputBox({
       const url = `https://text.pollinations.ai`;
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          Authorization: OKEYMETA_AUTH_TOKEN,
-        },
+       // headers: {
+       //   Authorization: OKEYMETA_AUTH_TOKEN,
+      //  },
       });
 
       const text = await response.text();
