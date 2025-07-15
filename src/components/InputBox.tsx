@@ -63,7 +63,7 @@ export default function InputBox({
     try {
       const encodedInput = encodeURIComponent(content);
      // const url = `https://api.okeymeta.com.ng/api/ssailm/model/${OKEYMETA_MODEL}/okeyai?input=${encodedInput}`;
-      const url = `https://text.pollinations.ai`;
+      const url = `https://text.pollinations.ai/${encodedInput}`;
       const response = await fetch(url, {
         method: 'GET',
        // headers: {
