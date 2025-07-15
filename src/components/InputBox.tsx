@@ -35,8 +35,8 @@ export default function InputBox({
   const [selectedUtilities, setSelectedUtilities] = useState<string[]>([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const OKEYMETA_AUTH_TOKEN = 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab'; 
-  const OKEYMETA_MODEL = 'okeyai2.0-basic';
+  // const OKEYMETA_AUTH_TOKEN = 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab'; 
+ //  const OKEYMETA_MODEL = 'okeyai2.0-basic';
 
   const toggleUtility = (key: string) => {
     setSelectedUtilities((prev) =>
@@ -62,8 +62,8 @@ export default function InputBox({
 
     try {
       const encodedInput = encodeURIComponent(content);
-      const url = `https://api.okeymeta.com.ng/api/ssailm/model/${OKEYMETA_MODEL}/okeyai?input=${encodedInput}`;
-
+     // const url = `https://api.okeymeta.com.ng/api/ssailm/model/${OKEYMETA_MODEL}/okeyai?input=${encodedInput}`;
+      const url = `https://text.pollinations.ai`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
