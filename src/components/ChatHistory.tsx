@@ -103,120 +103,103 @@ export default function ChatHistory({
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pb-32 space-y-6">
-      {messages.map((msg, index) => {
-        const isUser = msg.role === 'user';
-        return (
-          <div
-            key={index}
-            className={`group relative px-5 py-4 rounded-xl transition-all max-w-[90%] text-sm sm:text-base shadow-sm border ${
-              isUser
-                ? 'ml-auto text-right bg-primary/10 dark:bg-yellow-400/10 border-yellow-300/20 dark:border-yellow-500/20'
-                : 'mr-auto text-left bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800'
-            }`}
-          >
-            {/* Timestamp and role */}
-            <div className="text-xs text-neutral-400 mb-1 flex justify-between">
-              <span>
-                {isUser ? 'You' : 'Okeymeta'} •{' '}
-                {new Date(msg.timestamp).toLocaleTimeString()}
-              </span>
-              {index === messages.length - 1 && fetchDuration !== null && (
-                <span className="text-xs text-neutral-500">
-                  {fetchDuration}s
-                </span>
-              )}
-            </div>
-
-            {/* Message content */}
-            <div className="whitespace-pre-line leading-relaxed">{msg.content}</div>
-
-            {/* Assistant actions */}
-            {!isUser && (
-              <div className="mt-3 flex gap-4 items-center text-neutral-500 text-xs">
-                <button
-                  onClick={() => handleLike(index)}
-                  className={`hover:text-green-500 ${
-                    msg.liked ? 'text-green-600' : ''
-                  }`}
-                  title="Like"
-                >
-                  <ThumbsUp size={16} />
-                </button>
-
-                <button
-                  onClick={() => handleDislike(index)}
-                  className={`hover:text-red-500 ${
-                    msg.disliked ? 'text-red-600' : ''
-                  }`}
-                  title="Dislike"
-                >
-                  <ThumbsDown size={16} />
-                </button>
-
-                <button
-                  onClick={() => handleRegenerate(msg.content)}
-                  className="hover:text-yellow-500"
-                  title="Regenerate"
-                >
-                  <RotateCw size={16} />
-                </button>
-
-                <button
-                  onClick={() => handleCopy(index, msg.content)}
-                  className="hover:text-blue-500"
-                  title="Copy"
-                >
-                  {copiedIndex === index ? (
-                    <Check size={16} />
-                  ) : (
-                    <Copy size={16} />
-                  )}
-                </button>
-
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="hover:text-gray-400 ml-auto"
-                  title="Delete"
-                >
-                  <Trash2 size={16} />
-                </button>
-
-                <button
-                  className="hover:text-gray-400"
-                  title="More actions"
-                >
-                  <MoreVertical size={16} />
-                </button>
-              </div>
-            )}
-
-            {/* Like/Dislike feedback options */}
-            {showReasons &&
-              showReasons.index === index &&
-              (showReasons.type === 'like' ? likeReasons : dislikeReasons).map(
-                (reason, i) => (
-                  <button
-                    key={i}
-                    onClick={() =>
-                      handleSelectReason(index, reason, showReasons.type)
-                    }
-                    className="block mt-2 text-xs px-3 py-1 rounded-full bg-white/5 hover:bg-primary hover:text-black transition-all border border-white/10"
-                  >
-                    {reason}
-                  </button>
-                )
-              )}
-          </div>
-        );
-      })}
-
-      {/* Typing indicator */}
-      {isTyping && (
-        <div className="animate-pulse px-5 py-4 rounded-xl text-left bg-[#f8f8f8] dark:bg-[#1a1a1a] border border-neutral-200 dark:border-neutral-800 max-w-full text-sm sm:text-base">
-          <span className="text-neutral-500">Okeymeta is typing...</span>
+  <div className="w-full max-w-[100ch] mx-auto px-4 pb-40 space-y-6">
+  {messages.map((msg, index) => {
+    const isUser = msg.role === 'user';
+    return (
+      <div
+        key={index}
+        className={`group relative px-6 py-5 rounded-2xl transition-all shadow-md border max-w-[95%] sm:max-w-[85%] lg:max-w-[75%] ${
+          isUser
+            ? 'ml-auto text-right bg-yellow-100 dark:bg-yellow-900 border-yellow-200 dark:border-yellow-600'
+            : 'mr-auto text-left bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700'
+        }`}
+      >
+        {/* Timestamp and role */}
+        <div className="text-xs text-gray-500 mb-2 flex justify-between">
+          <span>
+            {isUser ? 'You' : 'Okeymeta'} • {new Date(msg.timestamp).toLocaleTimeString()}
+          </span>
+          {index === messages.length - 1 && fetchDuration !== null && (
+            <span>{fetchDuration}s</span>
+          )}
         </div>
-      )}
+
+        {/* Message content */}
+        <div className="whitespace-pre-line leading-relaxed text-base text-black dark:text-white">
+          {msg.content}
+        </div>
+
+        {/* Assistant actions */}
+        {!isUser && (
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            <button
+              onClick={() => handleLike(index)}
+              className={`hover:text-green-600 ${msg.liked ? 'text-green-600 font-bold' : ''}`}
+              title="Like"
+            >
+              <ThumbsUp size={18} />
+            </button>
+
+            <button
+              onClick={() => handleDislike(index)}
+              className={`hover:text-red-600 ${msg.disliked ? 'text-red-600 font-bold' : ''}`}
+              title="Dislike"
+            >
+              <ThumbsDown size={18} />
+            </button>
+
+            <button
+              onClick={() => handleRegenerate(msg.content)}
+              className="hover:text-yellow-500"
+              title="Regenerate"
+            >
+              <RotateCw size={18} />
+            </button>
+
+            <button
+              onClick={() => handleCopy(index, msg.content)}
+              className="hover:text-blue-600"
+              title="Copy"
+            >
+              {copiedIndex === index ? <Check size={18} /> : <Copy size={18} />}
+            </button>
+
+            <button
+              onClick={() => handleDelete(index)}
+              className="hover:text-gray-500 ml-auto"
+              title="Delete"
+            >
+              <Trash2 size={18} />
+            </button>
+
+            <button className="hover:text-gray-400" title="More">
+              <MoreVertical size={18} />
+            </button>
+          </div>
+        )}
+
+        {/* Like/Dislike Feedback */}
+        {showReasons &&
+          showReasons.index === index &&
+          (showReasons.type === 'like' ? likeReasons : dislikeReasons).map((reason, i) => (
+            <button
+              key={i}
+              onClick={() => handleSelectReason(index, reason, showReasons.type)}
+              className="mt-2 mr-2 text-xs px-3 py-1 rounded-full bg-white/10 hover:bg-primary hover:text-black border border-white/10 transition-all"
+            >
+              {reason}
+            </button>
+          ))}
+      </div>
+    );
+  })}
+
+  {isTyping && (
+    <div className="animate-pulse px-6 py-5 rounded-2xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-gray-500 max-w-[75%]">
+      Okeymeta is typing...
     </div>
+  )}
+</div>
   );
 }
