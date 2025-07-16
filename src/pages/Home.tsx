@@ -7,7 +7,7 @@ export default function Home() {
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [hasChats, setHasChats] = useState(false);
-
+const [isTyping, setIsTyping] = useState(false);
   const handleSuggestionClick = (text: string) => {
     setInput(text);
     inputRef.current?.focus();
@@ -59,10 +59,11 @@ export default function Home() {
 
         <div className="fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 px-4 py-3">
           <InputBox
-            externalInput={input}
-            setExternalInput={setInput}
-            inputRef={inputRef}
-          />
+  externalInput={externalInput}
+  setExternalInput={setExternalInput}
+  inputRef={inputRef}
+  setIsTyping={setIsTyping} 
+/>
         </div>
       </div>
     </div>
