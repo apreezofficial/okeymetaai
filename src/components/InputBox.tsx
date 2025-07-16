@@ -23,12 +23,13 @@ type Props = {
   externalInput: string;
   setExternalInput: React.Dispatch<React.SetStateAction<string>>;
   inputRef: React.RefObject<HTMLTextAreaElement>;
+  setIsTyping: React.Dispatch<React.SetStateAction<boolean>>;
 };
-
 export default function InputBox({
   externalInput,
   setExternalInput,
   inputRef,
+  setIsTyping, 
 }: Props) {
   const [showUpload, setShowUpload] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -44,59 +45,53 @@ export default function InputBox({
     );
   };
 
-  const handleSend = async () => {
-    const content = externalInput.trim();
-    if (!content) return;
+const handleSend = async () => {
+  const content = externalInput.trim();
+  if (!content) return;
 
-    setIsSending(true);
+  setIsSending(true);
+  setIsTyping(true); 
 
-    const userMessage = {
-      role: 'user',
-      content,
+  const userMessage = {
+    role: 'user',
+    content,
+    timestamp: Date.now(),
+  };
+
+  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  const updatedHistory = [...history, userMessage];
+  localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+
+  try {
+    const encodedInput = encodeURIComponent(content);
+    const url = `https://text.pollinations.ai/${encodedInput}`;
+    const response = await fetch(url, { method: 'GET' });
+    const text = await response.text();
+
+    let assistantReply = '';
+    try {
+      const json = JSON.parse(text);
+      assistantReply = json?.message || json?.output || text;
+    } catch {
+      assistantReply = text;
+    }
+
+    const assistantMessage = {
+      role: 'assistant',
+      content: assistantReply,
       timestamp: Date.now(),
     };
 
-    const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-    const updatedHistory = [...history, userMessage];
-    localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
-
-    try {
-      const encodedInput = encodeURIComponent(content);
-     // const url = `https://api.okeymeta.com.ng/api/ssailm/model/${OKEYMETA_MODEL}/okeyai?input=${encodedInput}`;
-      const url = `https://text.pollinations.ai/${encodedInput}`;
-      const response = await fetch(url, {
-        method: 'GET',
-       // headers: {
-       //   Authorization: OKEYMETA_AUTH_TOKEN,
-      //  },
-      });
-
-      const text = await response.text();
-let assistantReply = '';
-
-try {
-  const json = JSON.parse(text);
-  assistantReply = json?.message || json?.output || text;
-} catch {
-  assistantReply = text;
-      }
-
-      const assistantMessage = {
-        role: 'assistant',
-        content: assistantReply,
-        timestamp: Date.now(),
-      };
-
-      const finalHistory = [...updatedHistory, assistantMessage];
-      localStorage.setItem('chatHistory', JSON.stringify(finalHistory));
-    } catch (err) {
-      console.error('Error contacting OkeyMeta:', err);
-    } finally {
-      setExternalInput('');
-      setIsSending(false);
-    }
-  };
-
+    const finalHistory = [...updatedHistory, assistantMessage];
+    localStorage.setItem('chatHistory', JSON.stringify(finalHistory));
+  } catch (err) {
+    console.error('Error contacting OkeyMeta:', err);
+  } finally {
+    setExternalInput('');
+    setIsSending(false);
+    setIsTyping(false); 
+  }
+};
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
