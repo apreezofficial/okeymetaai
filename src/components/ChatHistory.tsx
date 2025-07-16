@@ -194,12 +194,16 @@ export default function ChatHistory({
       </div>
     );
   })}
-
-  {isTyping && (
-    <div className="animate-pulse px-6 py-5 rounded-2xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-gray-500 max-w-[75%]">
-      Okeymeta is typing...
+{isTyping && (
+  <div className="flex items-center gap-2 px-6 py-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 w-fit">
+    <span className="text-sm text-neutral-500 mr-2">Okeymeta is typing</span>
+    <div className="flex items-center space-x-1">
+      <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+      <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
     </div>
-  )}
+  </div>
+)}
 </div>
   );
 }
