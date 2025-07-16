@@ -4,21 +4,28 @@ import InputBox from '../components/InputBox';
 import ChatHistory from '../components/ChatHistory';
 
 export default function Home() {
-  const [input, setInput] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [externalInput, setExternalInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [hasChats, setHasChats] = useState(false);
-const [isTyping, setIsTyping] = useState(false);
-  const handleSuggestionClick = (text: string) => {
-    setInput(text);
-    inputRef.current?.focus();
-  };
+
+  const [messages, setMessages] = useState(() => {
+    try {
+      const stored = localStorage.getItem('chatHistory');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
-    const stored = localStorage.getItem('chatHistory');
-    if (stored && JSON.parse(stored).length > 0) {
-      setHasChats(true);
-    }
-  }, []);
+    setHasChats(messages.length > 0);
+  }, [messages]);
+
+  const handleSuggestionClick = (text: string) => {
+    setExternalInput(text);
+    inputRef.current?.focus();
+  };
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white">
@@ -50,22 +57,23 @@ const [isTyping, setIsTyping] = useState(false);
       <div className="relative z-10 h-full flex flex-col">
         {!hasChats && (
           <div className="px-4 pt-8">
-            <SuggestionButtons onSelect={handleSuggestionClick} currentInput={input} />
+            <SuggestionButtons onSelect={handleSuggestionClick} currentInput={externalInput} />
           </div>
         )}
 
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-36">
-       <ChatHistory setExternalInput={setInput} /> </div>
+          <ChatHistory messages={messages} isTyping={isTyping} />
+        </div>
 
         <div className="fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 px-4 py-3">
           <InputBox
-  externalInput={externalInput}
-  setExternalInput={setExternalInput}
-  inputRef={inputRef}
-  setIsTyping={setIsTyping} 
-/>
+            externalInput={externalInput}
+            setExternalInput={setExternalInput}
+            inputRef={inputRef}
+            setIsTyping={setIsTyping}
+          />
         </div>
       </div>
     </div>
   );
-                  }
+}
