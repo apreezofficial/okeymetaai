@@ -42,10 +42,10 @@ export default function SuggestionButtons({
   const getPollinationsUrl = (ctx: ContextType) => {
     const prompt = encodeURIComponent(
       ctx === 'code'
-        ? '3 beginner coding project ideas'
+        ? '3 beginner coding project ideas, just list them in less than 7 words for each'
         : ctx === 'image'
-        ? '3 creative image prompts'
-        : '3 interesting tech concepts to explain'
+        ? '3 creative image prompts, just list them in less than 7 words for each'
+        : '3 interesting tech concepts to explain, just list them in less than 7 words for each'
     );
     return `https://text.pollinations.ai/${prompt}`;
   };
