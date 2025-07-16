@@ -20,15 +20,16 @@ type Message = {
   disliked?: boolean;
   feedbackReason?: string;
 };
-
 type Props = {
   messages: Message[];
+  setMessages: (msgs: Message[]) => void;
   isTyping: boolean;
   setExternalInput: (value: string) => void;
 };
 
 export default function ChatHistory({
   messages,
+  setMessages,
   isTyping,
   setExternalInput,
 }: Props) {
@@ -45,10 +46,10 @@ export default function ChatHistory({
     setFetchDuration(Number(((end - start) / 1000).toFixed(2)));
   }, [messages]);
 
-  const updateMessages = (updatedMessages: Message[]) => {
-    localStorage.setItem('chatHistory', JSON.stringify(updatedMessages));
-  };
-
+const updateMessages = (updatedMessages: Message[]) => {
+  setMessages(updatedMessages);
+  localStorage.setItem('chatHistory', JSON.stringify(updatedMessages));
+};
   const handleLike = (index: number) => {
     setShowReasons({ index, type: 'like' });
   };
@@ -87,7 +88,6 @@ export default function ChatHistory({
       updated.splice(index, 1);
     }
     updateMessages(updated);
-    window.location.reload(); // Refresh to reflect new chatHistory (or re-lift state later)
   };
 
   const handleCopy = (index: number, text: string) => {
