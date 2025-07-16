@@ -9,7 +9,7 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [hasChats, setHasChats] = useState(false);
 
-  const [messages] = useState(() => {
+  const [messages, setMessages] = useState(() => {
     try {
       const stored = localStorage.getItem('chatHistory');
       return stored ? JSON.parse(stored) : [];
@@ -20,6 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     setHasChats(messages.length > 0);
+    localStorage.setItem('chatHistory', JSON.stringify(messages));
   }, [messages]);
 
   const handleSuggestionClick = (text: string) => {
@@ -29,7 +30,7 @@ export default function Home() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white">
-      {/* Floating Dots */}
+      {/* Floating dots */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {Array.from({ length: 30 }).map((_, i) => {
           const left = Math.random() * 100;
@@ -62,11 +63,12 @@ export default function Home() {
         )}
 
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-36">
-     <ChatHistory
-  messages={messages}
-  isTyping={isTyping}
-  setExternalInput={setExternalInput}
-/>
+          <ChatHistory
+            messages={messages}
+            setMessages={setMessages}
+            isTyping={isTyping}
+            setExternalInput={setExternalInput}
+          />
         </div>
 
         <div className="fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 px-4 py-3">
@@ -75,6 +77,8 @@ export default function Home() {
             setExternalInput={setExternalInput}
             inputRef={inputRef}
             setIsTyping={setIsTyping}
+            setMessages={setMessages}
+            messages={messages}
           />
         </div>
       </div>
