@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Code, ImageIcon, Sparkles } from 'lucide-react';
 
-declare const OkeyMetaClient: any;
-
+type ContextType = 'code' | 'image' | 'concept';
 const icons = {
   code: <Code size={16} />,
   image: <ImageIcon size={16} />,
   concept: <Sparkles size={16} />,
 };
-
-type ContextType = 'code' | 'image' | 'concept';
 
 export default function SuggestionButtons({
   onSelect,
@@ -21,16 +18,14 @@ export default function SuggestionButtons({
   const [activeContext, setActiveContext] = useState<ContextType | null>(null);
   const [tips, setTips] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [hasChatHistory, setHasChatHistory] = useState(false); // 👈
+  const [hasChatHistory, setHasChatHistory] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('chatHistory');
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        setHasChatHistory(true); // 👈 set to true if chats exist
-      }
-    }
+    const interval = setInterval(() => {
+      const stored = localStorage.getItem('chatHistory');
+      setHasChatHistory(!!stored && JSON.parse(stored).length > 0);
+    }, 10);
+    return () => clearInterval(interval);
   }, []);
 
   const getBasePrompt = (ctx: ContextType) => {
@@ -44,65 +39,54 @@ export default function SuggestionButtons({
     }
   };
 
-  const getPromptTemplate = (ctx: ContextType) => {
-    switch (ctx) {
-      case 'code':
-        return 'Give me 3 popular coding ideas a beginner can try.';
-      case 'image':
-        return 'List 3 creative image prompts I can generate.';
-      case 'concept':
-        return 'Suggest 3 interesting tech concepts to explain.';
-    }
+  const getPollinationsUrl = (ctx: ContextType) => {
+    const prompt = encodeURIComponent(
+      ctx === 'code'
+        ? '3 beginner coding project ideas'
+        : ctx === 'image'
+        ? '3 creative image prompts'
+        : '3 interesting tech concepts to explain'
+    );
+    return `https://text.pollinations.ai/${prompt}`;
   };
 
-  const handleClick = async (context: ContextType) => {
-    setActiveContext(context);
-    onSelect(getBasePrompt(context));
+  const handleClick = async (ctx: ContextType) => {
+    setActiveContext(ctx);
+    onSelect(getBasePrompt(ctx));
     setLoading(true);
     setTips([]);
 
     try {
-      const client = new OkeyMetaClient({
-        auth_token: 'okeyai_b4749ef67c5a97f17f88a36fd1894adc35723310817b04ec9fc9d1b3b4e93eab',
-      });
-
-      const prompt = getPromptTemplate(context);
-      const response = await client.textCompletion({
-        model: 'okeyai3.0-vanguard',
-        input: prompt,
-      });
-
-      const tipsList = response
+      const res = await fetch(getPollinationsUrl(ctx));
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      const list = text
         .split('\n')
-        .map((line: string) => line.replace(/^\d+\.\s*/, '').trim())
+        .map(l => l.replace(/^\d+\.\s*/, '').trim())
         .filter(Boolean);
-
-      setTips(tipsList);
-    } catch (err: any) {
-      console.error('OkeyMeta Error:', err.message);
+      setTips(list);
+    } catch (e) {
+      console.error('Pollinations error:', e);
       setTips(['Failed to load suggestions']);
     } finally {
       setLoading(false);
     }
   };
 
+  // Hide suggestions if chat exists
   if (hasChatHistory) return null;
 
   return (
     <div className="w-full">
       <div className="flex flex-wrap justify-center gap-3 mt-6">
-        {(['code', 'image', 'concept'] as ContextType[]).map((context) => (
+        {(['code', 'image', 'concept'] as ContextType[]).map(ctx => (
           <button
-            key={context}
-            onClick={() => handleClick(context)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 dark:bg-white/5 text-sm backdrop-blur-md border border-white/10 hover:bg-primary hover:text-black transition-all duration-300 shadow hover:scale-105"
+            key={ctx}
+            onClick={() => handleClick(ctx)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 dark:bg-white/5 text-sm backdrop-blur-md border border-white/10 hover:bg-primary hover:text-black transition duration-200 shadow hover:scale-105"
           >
-            {icons[context]}
-            {context === 'code'
-              ? 'Generate Code'
-              : context === 'image'
-              ? 'Create Image'
-              : 'Explain Concept'}
+            {icons[ctx]}
+            {ctx === 'code' ? 'Generate Code' : ctx === 'image' ? 'Create Image' : 'Explain Concept'}
           </button>
         ))}
       </div>
@@ -115,7 +99,7 @@ export default function SuggestionButtons({
               <button
                 key={i}
                 onClick={() => onSelect(currentInput + tip)}
-                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition-all"
+                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-primary hover:text-black transition"
               >
                 {tip}
               </button>
