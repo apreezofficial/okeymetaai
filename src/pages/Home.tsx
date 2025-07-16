@@ -9,7 +9,7 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [hasChats, setHasChats] = useState(false);
 
-  const [messages, setMessages] = useState(() => {
+  const [messages] = useState(() => {
     try {
       const stored = localStorage.getItem('chatHistory');
       return stored ? JSON.parse(stored) : [];
