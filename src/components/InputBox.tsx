@@ -18,18 +18,29 @@ const utilityOptions = [
   { icon: <Brain size={18} />, label: 'Reasoning', key: 'reasoning' },
   { icon: <Sparkles size={18} />, label: 'Creative', key: 'creative' },
 ];
+// InputBox.tsx
+type Message = {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: number;
+};
 
 type Props = {
   externalInput: string;
-  setExternalInput: React.Dispatch<React.SetStateAction<string>>;
+  setExternalInput: (value: string) => void;
   inputRef: React.RefObject<HTMLTextAreaElement>;
-  setIsTyping: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTyping: (typing: boolean) => void;
+  messages: Message[];
+  setMessages: (messages: Message[]) => void; // ✅ Add this
 };
+
 export default function InputBox({
   externalInput,
   setExternalInput,
   inputRef,
-  setIsTyping, 
+  setIsTyping,
+  messages,
+  setMessages,
 }: Props) {
   const [showUpload, setShowUpload] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -44,23 +55,22 @@ export default function InputBox({
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
   };
-
 const handleSend = async () => {
   const content = externalInput.trim();
   if (!content) return;
 
   setIsSending(true);
-  setIsTyping(true); 
+  setIsTyping(true);
 
-  const userMessage = {
+  const userMessage: Message = {
     role: 'user',
     content,
     timestamp: Date.now(),
   };
 
-  const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-  const updatedHistory = [...history, userMessage];
-  localStorage.setItem('chatHistory', JSON.stringify(updatedHistory));
+  const history = [...messages, userMessage];
+  localStorage.setItem('chatHistory', JSON.stringify(history));
+  setMessages(history); 
 
   try {
     const encodedInput = encodeURIComponent(content);
@@ -76,20 +86,21 @@ const handleSend = async () => {
       assistantReply = text;
     }
 
-    const assistantMessage = {
+    const assistantMessage: Message = {
       role: 'assistant',
       content: assistantReply,
       timestamp: Date.now(),
     };
 
-    const finalHistory = [...updatedHistory, assistantMessage];
+    const finalHistory = [...history, assistantMessage];
     localStorage.setItem('chatHistory', JSON.stringify(finalHistory));
+    setMessages(finalHistory); 
   } catch (err) {
     console.error('Error contacting OkeyMeta:', err);
   } finally {
     setExternalInput('');
     setIsSending(false);
-    setIsTyping(false); 
+    setIsTyping(false);
   }
 };
   useEffect(() => {
